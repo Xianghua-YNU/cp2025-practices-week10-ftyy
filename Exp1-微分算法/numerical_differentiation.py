@@ -55,12 +55,13 @@ def richardson_derivative_all_orders(x, f, h, max_order=3):
     """
     # TODO: 实现Richardson外推法计算不同阶数的导数值
     D = []
-    # D[0]: 最简单的中心差分
-    D.append((f(x + h) - f(x - h)) / (2 * h))
-    for k in range(1, max_order):
-        # 利用递推公式
-        Dk = (4**k * (f(x + h / (2**k)) - f(x - h / (2**k))) / (2 * h / (2**k)) - D[k-1]) / (4**k - 1)
-        D.append(Dk)
+    for k in range(max_order):
+        hk = h / (2 ** k)
+        D.append((f(x + hk) - f(x - hk)) / (2 * hk))
+    # Richardson extrapolation
+    for m in range(1, max_order):
+        for k in range(max_order - 1, m - 1, -1):
+            D[k] = (4 ** m * D[k] - D[k - 1]) / (4 ** m - 1)
     return D
 
 def create_comparison_plot(x, x_central, dy_central, dy_richardson, df_analytical):
