@@ -43,6 +43,10 @@ def simpson(f, a, b, N):
     # 检查N是否为偶数
     if N % 2 != 0:
         raise ValueError("N must be an even number.")
+    # 奇数索引（1,3,5,...,N-1）
+    odd_sum = np.sum(y[1:N:2])
+    # 偶数索引（2,4,6,...,N-2）
+    even_sum = np.sum(y[2:N:2])
     h = (b - a) / N  # 步长
     x = np.linspace(a, b, N + 1)  # 子区间节点
     y = f(x)  # 函数值
