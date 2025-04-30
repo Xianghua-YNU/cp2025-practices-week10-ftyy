@@ -1,73 +1,42 @@
 import numpy as np
 
-# 待积分函数（学生需自行定义）
+# 待积分函数
 def f(x):
-    # 实现被积函数 f(x) = x^4 - 2x + 1
     return x**4 - 2*x + 1
 
-# 定义积分区间和子区间数
-a, b = 0, 2  # 积分区间
-N = 100  # 子区间数（必须为偶数）
-
-
-# 梯形法则积分函数（供参考比较用）
+# 已给出的梯形法则积分函数，供参考比较用
 def trapezoidal(f, a, b, N):
-    """
-    梯形法数值积分
-    :param f: 被积函数
-    :param a: 积分下限
-    :param b: 积分上限  
-    :param N: 子区间数
-    :return: 积分近似值
-    """
-    # 检查N是否为偶数
-    if N % 2 != 0:
-        raise ValueError("N must be an even number.")
-    h = (b - a) / N  # 步长
-    x = np.linspace(a, b, N + 1)  # 子区间节点
-    y = f(x)  # 函数值
-    integral = (h / 2) * (y[0] + 2 * np.sum(y[1:N]) + y[N])  # 梯形法则公式
+    h = (b - a) / N
+    x = np.linspace(a, b, N+1)
+    fx = f(x)
+    integral = h * (0.5 * fx[0] + np.sum(fx[1:-1]) + 0.5 * fx[-1])
     return integral
 
-
-# Simpson法则积分函数（学生需完成）
+# Simpson 法则积分函数
 def simpson(f, a, b, N):
-    """
-    Simpson法数值积分
-    :param f: 被积函数
-    :param a: 积分下限
-    :param b: 积分上限
-    :param N: 子区间数（必须为偶数）
-    :return: 积分近似值
-    """
-    # 检查N是否为偶数
     if N % 2 != 0:
-        raise ValueError("N must be an even number.")
-    h = (b - a) / N  # 步长
-    x = np.linspace(a, b, N + 1)  # 子区间节点
-    y = f(x)  # 函数值
+        raise ValueError("Simpson 法则要求 N 必须为偶数")
+    h = (b - a) / N
+    x = np.linspace(a, b, N+1)
+    fx = f(x)
     # 奇数索引（1,3,5,...,N-1）
-    odd_sum = np.sum(y[1:N:2])
+    odd_sum = np.sum(fx[1:N:2])
     # 偶数索引（2,4,6,...,N-2）
-    even_sum = np.sum(y[2:N:2])
-    integral = (h / 3) * (y[0] + 4 * np.sum(y[1:N:2]) + 2 * np.sum(y[2:N-1:2]) + y[N])  # Simpson法则公式
+    even_sum = np.sum(fx[2:N:2])
+    integral = h / 3 * (fx[0] + 4 * odd_sum + 2 * even_sum + fx[N])
     return integral
-    
 
 def main():
-    a, b = 0, 2  # 积分区间
-    exact_integral = 4.4  # 精确解
+    a, b = 0, 2
+    exact_integral = 4.4
 
-    for N in [100, 1000]:  # 不同子区间数
-        # 调用积分函数并计算结果
+    for N in [100, 1000]:
         trapezoidal_result = trapezoidal(f, a, b, N)
         simpson_result = simpson(f, a, b, N)
-        
-        # 计算相对误差
+
         trapezoidal_error = abs(trapezoidal_result - exact_integral) / exact_integral
         simpson_error = abs(simpson_result - exact_integral) / exact_integral
 
-        # 输出结果（模板已给出）
         print(f"N = {N}")
         print(f"梯形法则结果: {trapezoidal_result:.8f}, 相对误差: {trapezoidal_error:.2e}")
         print(f"Simpson法则结果: {simpson_result:.8f}, 相对误差: {simpson_error:.2e}")
